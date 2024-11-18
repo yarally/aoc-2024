@@ -1,4 +1,4 @@
-package com.yarallyaoc.main.java.library;
+package com.yarally.aoc24.library;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class FileReader {
     public static List<String> readFile(String fileName) {
         try {
-            File myObj = new File("src/com/yarallyaoc/main/resources/" + fileName);
+            File myObj = new File("src/main/resources/" + fileName);
             Scanner myReader = new Scanner(myObj);
             List<String> lines = new ArrayList<String>();
             while (myReader.hasNextLine()) {

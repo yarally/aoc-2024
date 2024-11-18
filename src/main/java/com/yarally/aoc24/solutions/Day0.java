@@ -1,7 +1,8 @@
-package com.yarallyaoc.main.java.solutions;
+package com.yarally.aoc24.solutions;
 
-import com.yarallyaoc.main.java.library.AbstractSolution;
-import com.yarallyaoc.main.java.library.FileReader;
+
+import com.yarally.aoc24.library.AbstractSolution;
+import com.yarally.aoc24.library.FileReader;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
-package com.yarallyaoc.main.java;
+package com.yarally.aoc24;
 
-import com.yarallyaoc.main.java.solutions.Day0;
+
+import com.yarally.aoc24.solutions.Day0;
 
 public class App {
     public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package com.yarallyaoc.main.java.library;
+package com.yarally.aoc24.library;
 
 public abstract class AbstractSolution<T> {
 

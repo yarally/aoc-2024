@@ -19,7 +19,12 @@ public class Day0 extends AbstractSolution<List<String>> {
     }
 
     @Override
-    protected String solve(List<String> input) {
+    protected String solve1(List<String> input) {
+        return String.join(" ", input);
+    }
+
+    @Override
+    protected String solve2(List<String> input) {
         return String.join(" ", input);
     }
 }

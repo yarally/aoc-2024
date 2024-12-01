@@ -3,11 +3,9 @@ package com.yarally.aoc24.solutions;
 import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Day1 extends AbstractSolution<List<List<Integer>>> {
     @Override
@@ -20,7 +18,7 @@ public class Day1 extends AbstractSolution<List<List<Integer>>> {
         List<String> parsed = FileReader.readFile(input);
         var left = new ArrayList<Integer>();
         var right = new ArrayList<Integer>();
-        for (String x: parsed) {
+        for (String x : parsed) {
             left.add(Integer.parseInt(x.split("   ")[0]));
             right.add(Integer.parseInt(x.split("   ")[1]));
         }
@@ -31,21 +29,18 @@ public class Day1 extends AbstractSolution<List<List<Integer>>> {
     }
 
     @Override
-    protected String solve(List<List<Integer>> input) {
-//        var left = input.get(0).stream().sorted().toList();
-//        var right = input.get(1).stream().sorted().toList();
-//        int diff = 0;
-//        for (int i = 0; i < left.size(); i++) {
-//            diff += Math.abs(left.get(i) - right.get(i));
-//        }
-//        return String.valueOf(diff);
+    protected String solve1(List<List<Integer>> input) {
+        var left = input.get(0).stream().sorted().toList();
+        var right = input.get(1).stream().sorted().toList();
+        int diff = IntStream.range(0, left.size()).map(i -> Math.abs(left.get(i) - right.get(i))).sum();
+        return String.valueOf(diff);
+    }
+
+    @Override
+    protected String solve2(List<List<Integer>> input) {
         var left = input.get(0);
         var right = input.get(1);
-        var score = 0;
-        for (int i = 0; i < left.size(); i++) {
-            int finalI = i;
-            score += left.get(i) * (int) right.stream().filter(x -> Objects.equals(x, left.get(finalI))).count();
-        }
+        var score = left.stream().map(x -> x * Collections.frequency(right, x)).mapToInt(Integer::valueOf).sum();
         return String.valueOf(score);
     }
 }

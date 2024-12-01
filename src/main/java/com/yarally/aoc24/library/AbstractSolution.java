@@ -39,27 +39,35 @@ public abstract class AbstractSolution<T> {
 
     protected abstract T parse(String input);
 
-    protected abstract String solve(T input);
+    protected abstract String solve1(T input);
+    protected abstract String solve2(T input);
 
     private String GetDay() {
         var cleaned = getInput().split(".txt")[0];
         return cleaned.replaceAll("day(\\d+)", "Day $1");
     }
 
-    public String SolvePuzzle() {
+    public void SolvePuzzle() {
         long t0 = System.nanoTime();
         var parsedInput = parse(getInput());
-        var solution = solve(parsedInput);
         var duration = (System.nanoTime() - t0) / Math.pow(10, 9);
-        logger.info(String.format("%fs | %s", duration, solution));
-        return solution;
+        logger.info(String.format("Time to parse: %fs", duration));
+        t0 = System.nanoTime();
+        var star1 = solve1(parsedInput);
+        duration = (System.nanoTime() - t0) / Math.pow(10, 9);
+        logger.info(String.format("Star1 | %fs | %s", duration, star1));
+
+        t0 = System.nanoTime();
+        var star2 = solve2(parsedInput);
+        duration = (System.nanoTime() - t0) / Math.pow(10, 9);
+        logger.info(String.format("Star2 | %fs | %s\n", duration, star2));
     }
 
-    public String SolvePuzzle(boolean skip) {
+    public void SolvePuzzle(boolean skip) {
         if (skip) {
             logger.info("SKIPPED");
-            return null;
+            return;
         }
-        return SolvePuzzle();
+        SolvePuzzle();
     }
 }

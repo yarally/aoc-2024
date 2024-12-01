@@ -51,7 +51,7 @@ public abstract class AbstractSolution<T> {
         var parsedInput = parse(getInput());
         var solution = solve(parsedInput);
         var duration = (System.nanoTime() - t0) / Math.pow(10, 9);
-        logger.info(String.format("%fs | %s", duration,solution));
+        logger.info(String.format("%fs | %s", duration, solution));
         return solution;
     }
 

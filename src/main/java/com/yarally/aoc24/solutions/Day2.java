@@ -17,7 +17,6 @@ public class Day2 extends AbstractSolution<List<Report>> {
     @Override
     protected List<Report> parse(String input) {
         List<String> lines = FileReader.readFile(input);
-        assert lines != null;
         return lines.stream().map(line -> new Report(
             Arrays.stream(line.split(" ")).map(Integer::valueOf).toList())).toList();
     }

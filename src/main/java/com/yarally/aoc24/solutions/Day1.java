@@ -2,9 +2,9 @@ package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
-
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.IntStream;
 
 public class Day1 extends AbstractSolution<List<List<Integer>>> {

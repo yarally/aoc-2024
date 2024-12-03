@@ -21,6 +21,6 @@ public class FileReader {
         } catch (FileNotFoundException e) {
             System.out.println("FILE NOT FOUND");
         }
-        return null;
+        return List.of();
     }
 }

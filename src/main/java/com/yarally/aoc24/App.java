@@ -5,6 +5,7 @@ import com.yarally.aoc24.solutions.Day0;
 import com.yarally.aoc24.solutions.Day1;
 import com.yarally.aoc24.solutions.Day2;
 import com.yarally.aoc24.solutions.Day3;
+import com.yarally.aoc24.solutions.Day4;
 
 public class App {
     public static void main(String[] args) {
@@ -12,5 +13,6 @@ public class App {
         new Day1().SolvePuzzle();
         new Day2().SolvePuzzle();
         new Day3().SolvePuzzle();
+        new Day4().SolvePuzzle();
     }
 }

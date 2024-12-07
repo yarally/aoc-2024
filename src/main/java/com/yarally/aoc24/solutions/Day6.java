@@ -34,33 +34,25 @@ public class Day6 extends AbstractSolution<Tuple<Map, Point>> {
 
     @Override
     protected String solve1(Tuple<Map, Point> input) {
-        var map = input.x;
-        var guard = input.y.getClone();
-        int[] direction = new int[] { 0, 1 };
-        Set<Point> visited = new HashSet<>();
-        visited.add(guard.getClone());
-        while (!map.outOfBounds(guard)) {
-            if (map.hitObstacle(guard.dryMove(direction[0], direction[1]))) {
-                direction = new int[] {direction[1], -direction[0]};
-                continue;
-            }
-            visited.add(guard.move(direction[0], direction[1]).getClone());
-        }
-        return (visited.size() - 1) + "";
+
+        return (getPath(input).size() - 1) + "";
     }
 
     @Override
     protected String solve2(Tuple<Map, Point> input) {
         int count = 0;
-
+        var validPositions = getPath(input);
         for (int i = 0; i < input.x.bounds[1]; i++) {
             for (int j = 0; j < input.x.bounds[0]; j++) {
+                Point newObstacle = new Point(j, i);
+                if (!validPositions.contains(newObstacle)) {
+                    continue;
+                }
                 var map = input.x.getClone();
                 int[] direction = new int[] { 0, 1 };
                 Set<String> visited = new HashSet<>();
                 var guard = input.y.getClone();
                 visited.add(guard.getClone().toString() + direction[0] + direction[1]);
-                Point newObstacle = new Point(j, i);
                 if (map.hitObstacle(newObstacle)) {
                     continue;
                 }
@@ -80,5 +72,21 @@ public class Day6 extends AbstractSolution<Tuple<Map, Point>> {
             }
         }
         return count + "";
+    }
+
+    private Set<Point> getPath(Tuple<Map, Point> input) {
+        var map = input.x;
+        var guard = input.y.getClone();
+        int[] direction = new int[] { 0, 1 };
+        Set<Point> visited = new HashSet<>();
+        visited.add(guard.getClone());
+        while (!map.outOfBounds(guard)) {
+            if (map.hitObstacle(guard.dryMove(direction[0], direction[1]))) {
+                direction = new int[] {direction[1], -direction[0]};
+                continue;
+            }
+            visited.add(guard.move(direction[0], direction[1]).getClone());
+        }
+        return visited;
     }
 }

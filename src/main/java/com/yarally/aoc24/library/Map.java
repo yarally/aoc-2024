@@ -1,5 +1,6 @@
 package com.yarally.aoc24.library;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -10,7 +11,7 @@ public class Map {
 
     public Map(int[] bounds, Set<Point> obstacles, boolean infinite) {
         this.bounds = bounds;
-        this.obstacles = obstacles;
+        this.obstacles = obstacles != null ? obstacles : new HashSet<>();
         this.infinite = infinite;
     }
 

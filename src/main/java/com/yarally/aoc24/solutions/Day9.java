@@ -2,12 +2,9 @@ package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
-import com.yarally.aoc24.library.linkedlist.DLLNode;
-import com.yarally.aoc24.library.linkedlist.DoublyLinkedList;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-public class Day9 extends AbstractSolution<DoublyLinkedList<Integer>> {
+public class Day9 extends AbstractSolution<Integer[]> {
 
     @Override
     protected String getInput() {
@@ -15,196 +12,93 @@ public class Day9 extends AbstractSolution<DoublyLinkedList<Integer>> {
     }
 
     @Override
-    protected DoublyLinkedList<Integer> parse(String input) {
-        var line = FileReader.readFile(input).stream().map(String::toCharArray)
-            .toArray(char[][]::new)[0];
+    protected Integer[] parse(String input) {
+        var line = FileReader.readFile(input).getFirst().chars().map(Character::getNumericValue)
+            .toArray();
         boolean isFile = true;
         int fileId = 0;
-        List<DLLNode<Integer>> nodes = new ArrayList<>();
-        for (char c : line) {
-            int size = Integer.parseInt(String.valueOf(c));
-            for (int i = 0; i < size; i++) {
-                nodes.add(new DLLNode<>(isFile ? fileId : -1));
+        Integer[] files = new Integer[Arrays.stream(line).sum()];
+        int idx = 0;
+        for (int data : line) {
+            for (int i = 0; i < data; i++) {
+                files[idx + i] = isFile ? fileId : null;
             }
+            idx += data;
             if (isFile) {
                 fileId++;
             }
             isFile = !isFile;
         }
-        for (int i = 0; i < nodes.size(); i++) {
-            if (i > 0) {
-                nodes.get(i).setPrevious(nodes.get(i - 1));
+        return files;
+    }
+
+    @Override
+    protected String solve1(Integer[] input) {
+        var files = input.clone();
+        int i = 0;
+        int j = files.length - 1;
+        while (i != j) {
+            if (files[i] != null) {
+                i++;
+                continue;
             }
-            if (i < nodes.size() - 1) {
-                nodes.get(i).setNext(nodes.get(i + 1));
+            if (files[j] == null) {
+                j--;
+                continue;
             }
+            files[i] = files[j];
+            files[j] = null;
         }
-        return new DoublyLinkedList<>(nodes.getFirst(), nodes.getLast(), nodes);
+        return getCheckSum(files) + "";
     }
 
     @Override
-    protected String solve1(DoublyLinkedList<Integer> input) {
-        return "";
-//        var left = input.getHead();
-//        var right = input.getTail();
-//        while (left != right) {
-//            if (left.value >= 0) {
-//                left = left.getNext();
-//                continue;
-//            }
-//            if (right.value < 0) {
-//                right = right.getPrevious();
-//                continue;
-//            }
-//            var lNext = left.getNext();
-//            var lPrev = left.getPrevious();
-//            left.setNext(right.getNext());
-//            left.setPrevious(right.getPrevious());
-//            right.setNext(lNext);
-//            right.setPrevious(lPrev);
-//            if (right == input.getTail()) {
-//                input.setTail(left);
-//            }
-//            if (left == input.getHead()) {
-//                input.setHead(right);
-//            }
-//            right = left.getPrevious();
-//            left = lNext;
-//        }
-//        var current = input.getHead();
-//        var idx = 0L;
-//        var checkSum = 0L;
-//        while (current.value >= 0) {
-//            checkSum += current.value * idx;
-//            idx++;
-//            current = current.getNext();
-//        }
-//        return checkSum + "";
-    }
-
-    @Override
-    protected String solve2(DoublyLinkedList<Integer> input) {
-        var left = input.getHead();
-        var right = input.getTail();
-        while (left != right && right != null) {
-            if (left.value >= 0) {
-                left = left.getNext();
+    protected String solve2(Integer[] input) {
+        var files = input.clone();
+        for (int right = files.length - 1; right >= 0; right--) {
+            if (files[right] == null) {
                 continue;
             }
-            if (right.value < 0) {
-                right = right.getPrevious();
-                continue;
+            var blockSizeR = 0;
+            while (right - blockSizeR >= 0
+                && files[right - blockSizeR] != null
+                && files[right - blockSizeR].equals(files[right])) {
+                blockSizeR++;
             }
-//            System.out.println(right.value);
-            var lBlockSize = getForwardBlockSize(left);
-            var rBlockSize = getBackwardBlockSize(right);
-            while (left != null) {
-                if (left == right) {
-                    break;
-                }
-                if (left.value >= 0) {
-                    left = left.getNext();
+            for (int left = 0; left < right - blockSizeR; left++) {
+                if (files[left] != null) {
                     continue;
                 }
-                lBlockSize = getForwardBlockSize(left);
-                if (lBlockSize >= rBlockSize) {
-                    break;
+                var blockSizeL = 0;
+                while (left + blockSizeL < files.length
+                    && files[left + blockSizeL] == null) {
+                    blockSizeL++;
                 }
-                left = left.getNext();
+                if (blockSizeL < blockSizeR) {
+                    left += blockSizeL - 1;
+                    continue;
+                }
+                // Fitting block found
+                for (int i = 0; i < blockSizeR; i++) {
+                    files[left + i] = files[right - i];
+                    files[right - i] = null;
+                }
+                break;
             }
-            if (left == null || lBlockSize < rBlockSize) {
-                right = getBackwardBlock(right).getPrevious();
-                left = input.getHead();
+            right -= blockSizeR - 1;
+        }
+
+        return getCheckSum(files) + "";
+    }
+
+    public long getCheckSum(Integer[] input) {
+        var checkSum = 0L;
+        for (int i = 0; i < input.length; i++) {
+            if (input[i] == null) {
                 continue;
             }
-            var l1 = left;
-            var l2 = left.getNext(rBlockSize);
-            var lp = l1.getPrevious();
-            var ln = l2.getNext();
-            var r1 = getBackwardBlock(right);
-            var r2 = right;
-            var rp = r1.getPrevious();
-            var rn = r2.getNext();
-            if (lp != null) {
-                lp.setNext(r1);
-            }
-            r1.setPrevious(lp);
-            ln.setPrevious(r2);
-            r2.setNext(ln);
-            rp.setNext(l1);
-            l1.setPrevious(rp);
-            if (rn != null) {
-                rn.setPrevious(l2);
-            }
-            l2.setNext(rn);
-            left = input.getHead();
-            right = rp;
+            checkSum += (long) i * input[i];
         }
-//        System.out.println(input);
-        var current = input.getHead();
-        var idx = 0L;
-        var checkSum = 0L;
-        while (current != null) {
-            if (current.value > 0) {
-                checkSum += current.value * idx;
-            }
-            idx++;
-            current = current.getNext();
-        }
-        return checkSum + "";
-        // wrong: 6435922584968
-        // wrong: 10186223672776
-    }
-
-    private DLLNode<Integer> getBackwardBlock(DLLNode<Integer> start) {
-        var id = start.value;
-        var current = start;
-        while (true) {
-            if (current.getPrevious() != null && current.getPrevious().value.equals(id)) {
-                current = current.getPrevious();
-            } else {
-                return current;
-            }
-        }
-    }
-
-    private DLLNode<Integer> getForwardBlock(DLLNode<Integer> start) {
-        var id = start.value;
-        var current = start;
-        while (true) {
-            if (current.getPrevious() != null && current.getPrevious().value.equals(id)) {
-                current = current.getPrevious();
-            } else {
-                return current;
-            }
-        }
-    }
-
-    private int getBackwardBlockSize(DLLNode<Integer> start) {
-        var size = 0;
-        var id = start.value;
-        var current = start;
-        while (true) {
-            size++;
-            if (current.getPrevious() != null && current.getPrevious().value.equals(id)) {
-                current = current.getPrevious();
-            } else {
-                return size;
-            }
-        }
-    }
-
-    private int getForwardBlockSize(DLLNode<Integer> start) {
-        var id = start.value;
-        var current = start;
-        var size = 0;
-        while (true) {
-            size++;
-            if (current.getNext() != null && current.getNext().value.equals(id)) {
-                current = current.getNext();
-            } else {
-                return size;
-            }
-        }
+        return checkSum;
     }
 }

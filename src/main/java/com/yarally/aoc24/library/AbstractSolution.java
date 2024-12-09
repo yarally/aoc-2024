@@ -65,7 +65,7 @@ public abstract class AbstractSolution<T> {
 
     public void SolvePuzzle(boolean skip) {
         if (skip) {
-            logger.info("SKIPPED");
+            logger.info("SKIPPED\n");
             return;
         }
         SolvePuzzle();

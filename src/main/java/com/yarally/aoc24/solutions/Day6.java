@@ -1,19 +1,20 @@
 package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.*;
+import com.yarally.aoc24.library.Maps.ObstacleMap;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Day6 extends AbstractSolution<Tuple<Map, Point>> {
+public class Day6 extends AbstractSolution<Tuple<ObstacleMap, Point>> {
     @Override
     protected String getInput() {
         return "day6.txt";
     }
 
     @Override
-    protected Tuple<Map, Point> parse(String input) {
+    protected Tuple<ObstacleMap, Point> parse(String input) {
         List<String> lines = FileReader.readFile(input).reversed();
         Point startPos = null;
         Set<Point> obstacles = new HashSet<>();
@@ -29,17 +30,17 @@ public class Day6 extends AbstractSolution<Tuple<Map, Point>> {
             }
         }
         int[] bounds = new int[] {lines.get(0).length(), lines.size()};
-        return new Tuple<>(new Map(bounds, obstacles, false), startPos);
+        return new Tuple<>(new ObstacleMap(bounds, obstacles, false), startPos);
     }
 
     @Override
-    protected String solve1(Tuple<Map, Point> input) {
+    protected String solve1(Tuple<ObstacleMap, Point> input) {
 
         return (getPath(input).size() - 1) + "";
     }
 
     @Override
-    protected String solve2(Tuple<Map, Point> input) {
+    protected String solve2(Tuple<ObstacleMap, Point> input) {
         int count = 0;
         var validPositions = getPath(input);
         for (int i = 0; i < input.x.bounds[1]; i++) {
@@ -74,7 +75,7 @@ public class Day6 extends AbstractSolution<Tuple<Map, Point>> {
         return count + "";
     }
 
-    private Set<Point> getPath(Tuple<Map, Point> input) {
+    private Set<Point> getPath(Tuple<ObstacleMap, Point> input) {
         var map = input.x;
         var guard = input.y.getClone();
         int[] direction = new int[] { 0, 1 };

@@ -1,20 +1,21 @@
 package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.*;
+import com.yarally.aoc24.library.Maps.ObstacleMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-public class Day8 extends AbstractSolution<Tuple<Map, HashMap<String, List<Point>>>> {
+public class Day8 extends AbstractSolution<Tuple<ObstacleMap, HashMap<String, List<Point>>>> {
     @Override
     protected String getInput() {
         return "day8.txt";
     }
 
     @Override
-    protected Tuple<Map, HashMap<String, List<Point>>> parse(String input) {
+    protected Tuple<ObstacleMap, HashMap<String, List<Point>>> parse(String input) {
         var lines = FileReader.readFile(input);
         HashMap<String, List<Point>> antennas = new HashMap<>();
         for (int y = 0; y < lines.size(); y++) {
@@ -28,12 +29,12 @@ public class Day8 extends AbstractSolution<Tuple<Map, HashMap<String, List<Point
                 }
             }
         }
-        Map map = new Map(new int[]{lines.get(0).length(), lines.size()}, null, false);
+        ObstacleMap map = new ObstacleMap(new int[]{lines.get(0).length(), lines.size()}, null, false);
         return new Tuple<>(map, antennas);
     }
 
     @Override
-    protected String solve1(Tuple<Map, HashMap<String, List<Point>>> input) {
+    protected String solve1(Tuple<ObstacleMap, HashMap<String, List<Point>>> input) {
         var map = input.x;
         var antennas = input.y;
         var antiNodes = new HashSet<Point>();
@@ -58,7 +59,7 @@ public class Day8 extends AbstractSolution<Tuple<Map, HashMap<String, List<Point
     }
 
     @Override
-    protected String solve2(Tuple<Map, HashMap<String, List<Point>>> input) {
+    protected String solve2(Tuple<ObstacleMap, HashMap<String, List<Point>>> input) {
         var map = input.x;
         var antennas = input.y;
         var antiNodes = new HashSet<Point>();

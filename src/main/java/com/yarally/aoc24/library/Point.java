@@ -27,6 +27,10 @@ public class Point {
         return new Point(x + xDist, y + yDist);
     }
 
+    public Point add(Point other) {
+        return new Point(x + other.x, y + other.y);
+    }
+
     public Point getClone() {
         return new Point(x, y);
     }

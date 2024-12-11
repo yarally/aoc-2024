@@ -16,5 +16,6 @@ public class App {
         new Day8().SolvePuzzle();
         new Day9().SolvePuzzle();
         new Day10().SolvePuzzle();
+        new Day11().SolvePuzzle();
     }
 }

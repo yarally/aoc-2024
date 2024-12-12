@@ -22,6 +22,22 @@ public class Point {
         return y;
     }
 
+    public Point up() {
+        return new Point(x, y + 1);
+    }
+
+    public Point down() {
+        return new Point(x, y - 1);
+    }
+
+    public Point left() {
+        return new Point(x - 1, y);
+    }
+
+    public Point right() {
+        return new Point(x + 1, y);
+    }
+
     public Point move(int xDist, int yDist) {
         x += xDist;
         y += yDist;

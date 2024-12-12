@@ -4,13 +4,10 @@ import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
 import com.yarally.aoc24.library.Maps.RichMap;
 import com.yarally.aoc24.library.Point;
-import com.yarally.aoc24.library.Tuple;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Day12 extends AbstractSolution<RichMap<Character>> {
 
@@ -110,66 +107,27 @@ public class Day12 extends AbstractSolution<RichMap<Character>> {
         }
 
         public int getBulkPerimeter() {
-            List<Tuple<Point, Point>> perimeter = new ArrayList<>();
-            for (var p : positions) {
-                for (var n : p.get4Neighbours(map, false)) {
-                    var val = map.getValue(n);
-                    if (val == null || val != crop) {
-                        perimeter.add(new Tuple<>(p, n.min(p)));
-                    }
-                }
+            if (positions.size() == 1) return 4;
+            var corners = 0;
+            for (Point p : positions) {
+                var n = p.up();
+                var e = p.right();
+                var s = p.down();
+                var w = p.left();
+                var ne = new Point(p.getX() + 1, p.getY() + 1);
+                var se = new Point(p.getX() + 1, p.getY() - 1);
+                var sw = new Point(p.getX() - 1, p.getY() - 1);
+                var nw = new Point(p.getX() - 1, p.getY() + 1);
+                if (!isNeighbour(n) && !isNeighbour(e)) corners++;
+                if (!isNeighbour(n) && !isNeighbour(w)) corners++;
+                if (!isNeighbour(s) && !isNeighbour(e)) corners++;
+                if (!isNeighbour(s) && !isNeighbour(w)) corners++;
+                if (isNeighbour(n) && isNeighbour(e) && !isNeighbour(ne)) corners++;
+                if (isNeighbour(n) && isNeighbour(w) && !isNeighbour(nw)) corners++;
+                if (isNeighbour(s) && isNeighbour(e) && !isNeighbour(se)) corners++;
+                if (isNeighbour(s) && isNeighbour(w) && !isNeighbour(sw)) corners++;
             }
-            var fences = 0;
-            Set<Tuple<Point, Point>> visited = new HashSet<>();
-            for (var tp : perimeter) {
-                if (visited.contains(tp)) {
-                    continue;
-                }
-                visited.add(tp);
-                var pos = tp.x;
-                var dir = tp.y;
-                var options = perimeter.stream().filter(t -> t.y.equals(dir)).map(t -> t.x)
-                    .collect(Collectors.toSet());
-                // TOP & Bot
-                if (dir.getY() != 0) {
-                    var current = pos.getClone();
-                    while (true) {
-                        if (options.contains(current.move(1, 0))) {
-                            visited.add(new Tuple<>(current.getClone(), dir));
-                        } else {
-                            break;
-                        }
-                    }
-                    current = pos.getClone();
-                    while (true) {
-                        if (options.contains(current.move(-1, 0))) {
-                            visited.add(new Tuple<>(current.getClone(), dir));
-                        } else {
-                            break;
-                        }
-                    }
-                    // LEFT & RIGHT
-                } else {
-                    var current = pos.getClone();
-                    while (true) {
-                        if (options.contains(current.move(0, 1))) {
-                            visited.add(new Tuple<>(current.getClone(), dir));
-                        } else {
-                            break;
-                        }
-                    }
-                    current = pos.getClone();
-                    while (true) {
-                        if (options.contains(current.move(0, -1))) {
-                            visited.add(new Tuple<>(current.getClone(), dir));
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                fences++;
-            }
-            return fences;
+            return corners;
         }
 
         public int getScore() {
@@ -178,6 +136,10 @@ public class Day12 extends AbstractSolution<RichMap<Character>> {
 
         public int getBulkScore() {
             return positions.size() * getBulkPerimeter();
+        }
+
+        private boolean isNeighbour(Point pos) {
+            return positions.contains(pos);
         }
 
         @Override

@@ -148,6 +148,7 @@ public class Day12 extends AbstractSolution<RichMap<Character>> {
                 "crop=" + crop +
                 ", area=" + positions.size() +
                 ", perimeter=" + getPerimeter() +
+                ", bulk perimeter=" + getBulkPerimeter() +
                 '}';
         }
     }

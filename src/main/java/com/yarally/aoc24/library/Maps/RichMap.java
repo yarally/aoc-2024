@@ -17,6 +17,10 @@ public class RichMap<T> extends AbstractMap {
         return values[y][x];
     }
 
+    public T getValue(Point point) {
+        return getValue(point.getX(), point.getY());
+    }
+
     @Override
     public String toString() {
         StringBuilder map = new StringBuilder();

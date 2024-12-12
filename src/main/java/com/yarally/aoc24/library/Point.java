@@ -1,6 +1,11 @@
 package com.yarally.aoc24.library;
 
+import com.yarally.aoc24.library.Maps.AbstractMap;
+import java.util.List;
+import java.util.stream.Stream;
+
 public class Point {
+
     private int x;
     private int y;
 
@@ -31,16 +36,29 @@ public class Point {
         return new Point(x + other.x, y + other.y);
     }
 
+    public Point min(Point other) {
+        return new Point(x - other.x, y - other.y);
+    }
+
     public Point getClone() {
         return new Point(x, y);
+    }
+
+    public List<Point> get4Neighbours(AbstractMap map, boolean inBound) {
+        return Stream.of(
+            new Point(x + 1, y),
+            new Point(x, y - 1),
+            new Point(x - 1, y),
+            new Point(x, y + 1)
+        ).filter(p -> !map.outOfBounds(p) || !inBound).toList();
     }
 
     @Override
     public String toString() {
         return "Point{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+            "x=" + x +
+            ", y=" + y +
+            '}';
     }
 
     @Override
@@ -50,8 +68,12 @@ public class Point {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Point that)) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Point that)) {
+            return false;
+        }
 
         return this.x == that.x && this.y == that.y;
     }

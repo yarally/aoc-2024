@@ -39,10 +39,11 @@ public class Day13 extends AbstractSolution<List<List<long[]>>> {
         for (List<long[]> vectors : input) {
             long[] p = vectors.get(2);
             long[][] B = new long[][]{new long[]{vectors.get(0)[0], vectors.get(1)[0]}, new long[]{vectors.get(0)[1], vectors.get(1)[1]}};
-            double[][] BI = inverse(B);
-            double[] c_ = new double[]{BI[0][0] * p[0] + BI[0][1] * p[1], BI[1][0] * p[0] + BI[1][1] * p[1]};
-            if (!isInteger(c_[0]) || !isInteger(c_[1])) continue;
-            long[] c = new long[] {Math.round(c_[0]), Math.round(c_[1])};
+            long det = determinant(B);
+            long[][] BI = inverse(B);
+            long[] c_ = new long[]{BI[0][0] * p[0] + BI[0][1] * p[1], BI[1][0] * p[0] + BI[1][1] * p[1]};
+            if (c_[0] % det != 0 || c_[1] % det != 0) continue;
+            long[] c = new long[] {c_[0] / det, c_[1] / det};
             score += 3 * c[0] + c[1];
         }
         return score + "";
@@ -56,10 +57,11 @@ public class Day13 extends AbstractSolution<List<List<long[]>>> {
             p[0] += 10000000000000L;
             p[1] += 10000000000000L;
             long[][] B = new long[][]{new long[]{vectors.get(0)[0], vectors.get(1)[0]}, new long[]{vectors.get(0)[1], vectors.get(1)[1]}};
-            double[][] BI = inverse(B);
-            double[] c_ = new double[]{BI[0][0] * p[0] + BI[0][1] * p[1], BI[1][0] * p[0] + BI[1][1] * p[1]};
-            if (!isInteger(c_[0]) || !isInteger(c_[1])) continue;
-            long[] c = new long[] {Math.round(c_[0]), Math.round(c_[1])};
+            long det = determinant(B);
+            long[][] BI = inverse(B);
+            long[] c_ = new long[]{BI[0][0] * p[0] + BI[0][1] * p[1], BI[1][0] * p[0] + BI[1][1] * p[1]};
+            if (c_[0] % det != 0 || c_[1] % det != 0) continue;
+            long[] c = new long[] {c_[0] / det, c_[1] / det};
             score += 3 * c[0] + c[1];
         }
         return score + "";
@@ -69,17 +71,16 @@ public class Day13 extends AbstractSolution<List<List<long[]>>> {
         return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
 
-    private double[][] inverse(long[][] B) {
+    private long[][] inverse(long[][] B) {
         var matrix = new long[][]{B[0].clone(), B[1].clone()};
-        long det = determinant(matrix);
         long temp = matrix[0][0];
         matrix[0][0] = matrix[1][1];
         matrix[1][1] = temp;
-        double[][] inverseMatrix = new double[2][2];
-        inverseMatrix[0][0] = 1f / det * matrix[0][0];
-        inverseMatrix[1][1] = 1f / det * matrix[1][1];
-        inverseMatrix[0][1] = -1f / det * matrix[0][1];
-        inverseMatrix[1][0] = -1f / det * matrix[1][0];
+        long[][] inverseMatrix = new long[2][2];
+        inverseMatrix[0][0] = matrix[0][0];
+        inverseMatrix[1][1] = matrix[1][1];
+        inverseMatrix[0][1] = -matrix[0][1];
+        inverseMatrix[1][0] = -matrix[1][0];
         return inverseMatrix;
     }
 

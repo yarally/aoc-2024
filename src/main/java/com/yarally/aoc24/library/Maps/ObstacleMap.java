@@ -31,7 +31,7 @@ public class ObstacleMap extends AbstractMap {
     @Override
     public String toString() {
         StringBuilder map = new StringBuilder();
-        for (int row = bounds[1] - 1; row >=0 ; row--) {
+        for (int row = 0; row < bounds[1]; row++) {
             for (int col = 0; col < bounds[0]; col++) {
                 map.append(obstacles.contains(new Point(col, row)) ? '#' : '.');
             }

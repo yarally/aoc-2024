@@ -44,6 +44,12 @@ public class Point {
         return this;
     }
 
+    public Point update(int x, int y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
     public Point dryMove(int xDist, int yDist) {
         return new Point(x + xDist, y + yDist);
     }

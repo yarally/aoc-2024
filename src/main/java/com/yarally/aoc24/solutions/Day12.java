@@ -110,10 +110,10 @@ public class Day12 extends AbstractSolution<RichMap<Character>> {
             if (positions.size() == 1) return 4;
             var corners = 0;
             for (Point p : positions) {
-                var n = p.up();
-                var e = p.right();
-                var s = p.down();
-                var w = p.left();
+                var n = p.getUp();
+                var e = p.getright();
+                var s = p.getDown();
+                var w = p.getLeft();
                 var ne = new Point(p.getX() + 1, p.getY() + 1);
                 var se = new Point(p.getX() + 1, p.getY() - 1);
                 var sw = new Point(p.getX() - 1, p.getY() - 1);

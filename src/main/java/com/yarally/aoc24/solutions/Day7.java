@@ -2,7 +2,7 @@ package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
-import com.yarally.aoc24.library.Tuple;
+import com.yarally.aoc24.library.Tuple.Tuple;
 
 import java.util.ArrayList;
 import java.util.Arrays;

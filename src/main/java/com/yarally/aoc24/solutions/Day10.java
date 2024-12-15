@@ -4,7 +4,7 @@ import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
 import com.yarally.aoc24.library.Maps.RichMap;
 import com.yarally.aoc24.library.Point;
-import com.yarally.aoc24.library.Tuple;
+import com.yarally.aoc24.library.Tuple.Tuple;
 
 import java.util.HashSet;
 import java.util.Set;

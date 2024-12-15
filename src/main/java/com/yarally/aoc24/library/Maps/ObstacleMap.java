@@ -8,17 +8,12 @@ import java.util.stream.Collectors;
 
 public class ObstacleMap extends AbstractMap {
     private Set<Point> obstacles;
-    private boolean infinite;
 
-    public ObstacleMap(int[] bounds, Set<Point> obstacles, boolean infinite) {
+    public ObstacleMap(int[] bounds, Set<Point> obstacles) {
         super(bounds);
         this.obstacles = obstacles != null ? obstacles : new HashSet<>();
-        this.infinite = infinite;
     }
 
-    public void setInfinite(boolean val) {
-        this.infinite = val;
-    }
 
     public boolean hitObstacle(Point pos) {
         return obstacles.contains(pos);
@@ -41,6 +36,6 @@ public class ObstacleMap extends AbstractMap {
     }
 
     public ObstacleMap getClone() {
-        return new ObstacleMap(bounds.clone(), obstacles.stream().map(Point::getClone).collect(Collectors.toSet()), infinite);
+        return new ObstacleMap(bounds.clone(), obstacles.stream().map(Point::getClone).collect(Collectors.toSet()));
     }
 }

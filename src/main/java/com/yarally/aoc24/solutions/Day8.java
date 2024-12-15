@@ -2,6 +2,7 @@ package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.*;
 import com.yarally.aoc24.library.Maps.ObstacleMap;
+import com.yarally.aoc24.library.Tuple.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class Day8 extends AbstractSolution<Tuple<ObstacleMap, HashMap<String, Li
                 }
             }
         }
-        ObstacleMap map = new ObstacleMap(new int[]{lines.get(0).length(), lines.size()}, null, false);
+        ObstacleMap map = new ObstacleMap(new int[]{lines.get(0).length(), lines.size()}, null);
         return new Tuple<>(map, antennas);
     }
 

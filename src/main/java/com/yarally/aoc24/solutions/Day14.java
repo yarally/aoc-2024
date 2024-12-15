@@ -2,14 +2,12 @@ package com.yarally.aoc24.solutions;
 
 import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
-import com.yarally.aoc24.library.Maps.ObstacleMap;
 import com.yarally.aoc24.library.Point;
-import com.yarally.aoc24.library.Tuple;
+import com.yarally.aoc24.library.Tuple.Tuple;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class Day14 extends AbstractSolution<List<Tuple<Point, Point>>> {
     @Override

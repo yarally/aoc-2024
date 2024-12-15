@@ -1,6 +1,7 @@
 package com.yarally.aoc24.library;
 
 import com.yarally.aoc24.library.Maps.AbstractMap;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -8,6 +9,11 @@ public class Point {
 
     private int x;
     private int y;
+
+    public static Point UP = new Point(0, 1);
+    public static Point DOWN = new Point(0, -1);
+    public static Point LEFT = new Point(-1, 0);
+    public static Point RIGHT = new Point(1, 0);
 
     public Point(int x, int y) {
         this.x = x;
@@ -22,19 +28,19 @@ public class Point {
         return y;
     }
 
-    public Point up() {
+    public Point getUp() {
         return new Point(x, y + 1);
     }
 
-    public Point down() {
+    public Point getDown() {
         return new Point(x, y - 1);
     }
 
-    public Point left() {
+    public Point getLeft() {
         return new Point(x - 1, y);
     }
 
-    public Point right() {
+    public Point getright() {
         return new Point(x + 1, y);
     }
 
@@ -68,19 +74,19 @@ public class Point {
 
     public List<Point> get4Neighbours(AbstractMap map, boolean inBound) {
         return Stream.of(
-            new Point(x + 1, y),
-            new Point(x, y - 1),
-            new Point(x - 1, y),
-            new Point(x, y + 1)
+                new Point(x + 1, y),
+                new Point(x, y - 1),
+                new Point(x - 1, y),
+                new Point(x, y + 1)
         ).filter(p -> !map.outOfBounds(p) || !inBound).toList();
     }
 
     @Override
     public String toString() {
         return "Point{" +
-            "x=" + x +
-            ", y=" + y +
-            '}';
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 
     @Override

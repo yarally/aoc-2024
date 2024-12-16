@@ -6,10 +6,16 @@ import com.yarally.aoc24.library.Maps.ObstacleMap;
 import com.yarally.aoc24.library.Point;
 import com.yarally.aoc24.library.Tuple.Tuple;
 import com.yarally.aoc24.library.Tuple.Tuple3;
-
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
 
 public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
+
     @Override
     protected String getInput() {
         return "day16.txt";
@@ -35,7 +41,8 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
                 }
             }
         }
-        ObstacleMap map = new ObstacleMap(new int[]{lines.get(0).length(), lines.size()}, obstacles);
+        ObstacleMap map = new ObstacleMap(new int[]{lines.get(0).length(), lines.size()},
+            obstacles);
         return new Tuple3<>(map, start, end);
     }
 
@@ -53,15 +60,18 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
         var start = input.y;
         var end = input.z;
         var minScore = bfs(map, start, end);
+        var nonPathPositions = new HashMap<Tuple<Point, Point>, Integer>();
         var pathPoints = new HashSet<Point>();
-        dfs(map, end, minScore, start, Point.RIGHT, 0, pathPoints);
+        dfs(map, end, minScore, start, Point.RIGHT, 0, pathPoints, nonPathPositions);
         return pathPoints.size() + "";
     }
 
     private int bfs(ObstacleMap map, Point start, Point end) {
         var directions = List.of(Point.UP, Point.RIGHT, Point.DOWN, Point.LEFT);
         HashMap<Tuple<Point, Point>, Integer> g = new HashMap<>();
-        Queue<Tuple<Point, Point>> todo = new PriorityQueue<>(Comparator.comparingInt(tup -> (Math.abs(end.getY() - tup.x.getY()) + Math.abs(end.getX() - tup.x.getX()) + g.get(tup))));
+        Queue<Tuple<Point, Point>> todo = new PriorityQueue<>(Comparator.comparingInt(
+            tup -> (Math.abs(end.getY() - tup.x.getY()) + Math.abs(end.getX() - tup.x.getX())
+                + g.get(tup))));
         var tStart = new Tuple<>(start, new Point(1, 0));
         g.put(tStart, 0);
         todo.add(tStart);
@@ -71,9 +81,13 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
             var cDir = current.y;
             for (var nDir : directions) {
                 var nPos = cPos.add(nDir);
-                if ((nDir.getX() != 0 && nDir.getX() == -cDir.getX()) || (nDir.getY() != 0 && nDir.getY() == -cDir.getY()))
+                if ((nDir.getX() != 0 && nDir.getX() == -cDir.getX()) || (nDir.getY() != 0
+                    && nDir.getY() == -cDir.getY())) {
                     continue;
-                if (map.hitObstacle(nPos)) continue;
+                }
+                if (map.hitObstacle(nPos)) {
+                    continue;
+                }
                 var neigh = new Tuple<>(nPos, nDir);
                 int gScore;
                 if (nDir.equals(cDir)) {
@@ -81,7 +95,9 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
                 } else {
                     gScore = g.get(current) + 1001;
                 }
-                if (g.containsKey(neigh) && g.get(neigh) < gScore) continue;
+                if (g.containsKey(neigh) && g.get(neigh) < gScore) {
+                    continue;
+                }
                 g.put(neigh, gScore);
                 todo.add(neigh);
             }
@@ -97,7 +113,13 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
         return min;
     }
 
-    private boolean dfs(ObstacleMap map, Point end, int  targetScore, Point cPos, Point cDir, int score, HashSet<Point> pathPoints) {
+    private boolean dfs(ObstacleMap map, Point end, int targetScore, Point cPos, Point cDir,
+        int score, HashSet<Point> pathPoints,
+        HashMap<Tuple<Point, Point>, Integer> nonPathPositions) {
+        if (nonPathPositions.containsKey(new Tuple<>(cPos, cDir))
+            && nonPathPositions.get(new Tuple<>(cPos, cDir)) <= score) {
+            return false;
+        }
         var directions = List.of(Point.UP, Point.RIGHT, Point.DOWN, Point.LEFT);
         if (score > targetScore) {
             return false;
@@ -109,16 +131,21 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
         var pathExists = false;
         for (var nDir : directions) {
             var nPos = cPos.add(nDir);
-            if ((nDir.getX() != 0 && nDir.getX() == -cDir.getX()) || (nDir.getY() != 0 && nDir.getY() == -cDir.getY())) {
+            if ((nDir.getX() != 0 && nDir.getX() == -cDir.getX()) || (nDir.getY() != 0
+                && nDir.getY() == -cDir.getY())) {
                 continue;
             }
-            if (map.hitObstacle(nPos)) continue;
+            if (map.hitObstacle(nPos)) {
+                continue;
+            }
             if (nDir.equals(cDir)) {
-                if(dfs(map, end, targetScore, nPos, nDir, score + 1, pathPoints)) {
+                if (dfs(map, end, targetScore, nPos, nDir, score + 1, pathPoints,
+                    nonPathPositions)) {
                     pathExists = true;
                 }
             } else {
-                if(dfs(map, end, targetScore, nPos, nDir, score + 1001, pathPoints)) {
+                if (dfs(map, end, targetScore, nPos, nDir, score + 1001, pathPoints,
+                    nonPathPositions)) {
                     pathExists = true;
                 }
             }
@@ -127,6 +154,7 @@ public class Day16 extends AbstractSolution<Tuple3<ObstacleMap, Point, Point>> {
             pathPoints.add(cPos);
             return true;
         }
+        nonPathPositions.put(new Tuple<>(cPos, cDir), score);
         return false;
     }
 }

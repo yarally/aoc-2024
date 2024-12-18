@@ -1,12 +1,12 @@
 package com.yarally.aoc24.library.Maps;
 
 import com.yarally.aoc24.library.Point;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ObstacleMap extends AbstractMap {
+
     private Set<Point> obstacles;
 
     public ObstacleMap(int[] bounds, Set<Point> obstacles) {
@@ -23,6 +23,10 @@ public class ObstacleMap extends AbstractMap {
         obstacles.add(pos);
     }
 
+    public void clearObstacles() {
+        obstacles.clear();
+    }
+
     @Override
     public String toString() {
         StringBuilder map = new StringBuilder();
@@ -36,6 +40,7 @@ public class ObstacleMap extends AbstractMap {
     }
 
     public ObstacleMap getClone() {
-        return new ObstacleMap(bounds.clone(), obstacles.stream().map(Point::getClone).collect(Collectors.toSet()));
+        return new ObstacleMap(bounds.clone(),
+            obstacles.stream().map(Point::getClone).collect(Collectors.toSet()));
     }
 }

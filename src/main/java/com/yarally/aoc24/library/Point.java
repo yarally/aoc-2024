@@ -68,6 +68,10 @@ public class Point {
         return new Point(x - other.x, y - other.y);
     }
 
+    public int manhattan(Point other) {
+        return Math.abs(other.y - this.y) + Math.abs(other.x - this.x);
+    }
+
     public Point getClone() {
         return new Point(x, y);
     }

@@ -19,12 +19,20 @@ public class ObstacleMap extends AbstractMap {
         return obstacles.contains(pos);
     }
 
+    public boolean isFree(Point pos) {
+        return !outOfBounds(pos) && !hitObstacle(pos);
+    }
+
     public void addObstacle(Point pos) {
         obstacles.add(pos);
     }
 
     public void clearObstacles() {
         obstacles.clear();
+    }
+
+    public Set<Point> getObstacles() {
+        return obstacles.stream().map(Point::getClone).collect(Collectors.toSet());
     }
 
     @Override

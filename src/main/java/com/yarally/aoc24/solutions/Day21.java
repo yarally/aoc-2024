@@ -4,6 +4,7 @@ import com.yarally.aoc24.library.AbstractSolution;
 import com.yarally.aoc24.library.FileReader;
 import com.yarally.aoc24.library.Point;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,15 +22,19 @@ public class Day21 extends AbstractSolution<List<char[]>> {
 
     @Override
     protected String solve1(List<char[]> input) {
+        var res = 0L;
         for (var code : input) {
-            DirectionalRobot player = new DirectionalRobot(null);
-            DirectionalRobot d1 = new DirectionalRobot(player);
-            DirectionalRobot d2 = new DirectionalRobot(d1);
-            KeypadRobot k1 = new KeypadRobot(d2);
-            k1.executeSequence(code);
-            System.out.println(player.getScore());
+            DirectionalRobot player = new DirectionalRobot(null, "Player");
+            DirectionalRobot d1 = new DirectionalRobot(player, "DIR1");
+            DirectionalRobot d2 = new DirectionalRobot(d1, "DIR2");
+            KeypadRobot k1 = new KeypadRobot(d2, "KPAD");
+            var score1 = k1.executeSequence(code);
+            var score2 = Integer.parseInt(String.valueOf(code).replaceAll("[^0-9]", ""));
+            System.out.println(score1 + ": " + score1.length());
+            res += (long) score1.length() * score2;
         }
-        return null;
+        return res + "";
+        // 178070 too high
     }
 
     @Override
@@ -41,16 +46,17 @@ public class Day21 extends AbstractSolution<List<char[]>> {
         protected DirectionalRobot parent;
         protected Point pointer;
 
-        public abstract void executeSequence(char... sequence);
+        protected String id;
     }
 
     private static class KeypadRobot extends Robot {
 
         private final HashMap<Character, Point> keypad = new HashMap<>();
 
-        public KeypadRobot(DirectionalRobot parent) {
+        public KeypadRobot(DirectionalRobot parent, String id) {
             this.pointer = new Point(2, 0);
             this.parent = parent;
+            this.id = id;
             keypad.put('0', new Point(1, 0));
             keypad.put('A', new Point(2, 0));
             keypad.put('1', new Point(0, 1));
@@ -64,13 +70,14 @@ public class Day21 extends AbstractSolution<List<char[]>> {
             keypad.put('9', new Point(2, 3));
         }
 
-        @Override
-        public void executeSequence(char... sequence) {
+        public String executeSequence(char[] sequence) {
+            var count = "";
             for (var key : sequence) {
                 var keyPos = keypad.get(key);
                 // case already there
                 if (keyPos.equals(pointer)) {
-                    parent.executeSequence('A');
+                    count += "A";
+                    parent.executeSequence(new char[]{'A'});
                     pointer = keyPos;
                     continue;
                 }
@@ -78,38 +85,46 @@ public class Day21 extends AbstractSolution<List<char[]>> {
                 // determine translation
                 var dx = keyPos.getX() - pointer.getX();
                 var dy = keyPos.getY() - pointer.getY();
-                char[] nextSequence = new char[Math.abs(dx) + Math.abs(dy) + 1];
+                char[] nextSequence1;
+                char[] nextSequence2;
+                String xChars = (dx > 0 ? ">" : "<").repeat(Math.abs(dx));
+                String yChars = (dy > 0 ? "^" : "v").repeat(Math.abs(dy));
                 if (dy >= 0) {
-                    for (int i = 0; i < dy; i++) {
-                        nextSequence[i] = '^';
-                    }
-                    for (int i = dy; i < nextSequence.length - 1; i++) {
-                        nextSequence[i] = dx > 0 ? '>' : '<';
-                    }
+                    nextSequence1 = (yChars + xChars + "A").toCharArray();
+
                 } else {
-                    for (int i = 0; i < Math.abs(dx); i++) {
-                        nextSequence[i] = dx > 0 ? '>' : '<';
-                    }
-                    for (int i = Math.abs(dx); i < nextSequence.length - 1; i++) {
-                        nextSequence[i] = 'v';
-                    }
+                    nextSequence1 = (xChars + yChars + "A").toCharArray();
                 }
-                nextSequence[nextSequence.length - 1] = 'A';
-                parent.executeSequence(nextSequence);
+                if (dx >= 0) {
+                    nextSequence2 = (xChars + yChars + "A").toCharArray();
+
+                } else {
+                    nextSequence2 = (yChars + xChars + "A").toCharArray();
+                }
+                if (Arrays.equals(nextSequence1, nextSequence2)) {
+                    count += parent.executeSequence(nextSequence1);
+                } else {
+                    var s1 = parent.executeSequence(nextSequence1);
+                    var s2 = parent.executeSequence(nextSequence2);
+                    if (s1.length() != s2.length()) {
+                        System.out.println("HIT");
+                    }
+                    count += s1.length() < s2.length() ? s1 : s2;
+                }
                 pointer = keyPos;
-                var a = 1;
             }
+            return count;
         }
     }
 
     private static class DirectionalRobot extends Robot {
 
         private final HashMap<Character, Point> dirpad = new HashMap<>();
-        private int instructionCount;
 
-        public DirectionalRobot(DirectionalRobot parent) {
+        public DirectionalRobot(DirectionalRobot parent, String id) {
             this.pointer = new Point(2, 1);
             this.parent = parent;
+            this.id = id;
             dirpad.put('<', new Point(0, 0));
             dirpad.put('v', new Point(1, 0));
             dirpad.put('>', new Point(2, 0));
@@ -117,64 +132,51 @@ public class Day21 extends AbstractSolution<List<char[]>> {
             dirpad.put('A', new Point(2, 1));
         }
 
-        @Override
-        public void executeSequence(char... sequence) {
+        public String executeSequence(char[] sequence) {
             if (parent == null) {
-                instructionCount += sequence.length;
-                System.out.print(sequence);
-                return;
+                return String.valueOf(sequence);
             }
+            var count = "";
             for (var key : sequence) {
                 var keyPos = dirpad.get(key);
                 // case already there
                 if (keyPos.equals(pointer)) {
-                    parent.executeSequence('A');
+                    count += "A";
+                    parent.executeSequence(new char[]{'A'});
                     pointer = keyPos;
                     continue;
                 }
+
+                // determine translation
                 var dx = keyPos.getX() - pointer.getX();
                 var dy = keyPos.getY() - pointer.getY();
-                char[] nextSequence = new char[Math.abs(dx) + Math.abs(dy) + 1];
-                if (pointer.equals(new Point(0, 0))) {
-                    for (int i = 0; i < dx; i++) {
-                        nextSequence[i] = '>';
-                    }
-                    for (int i = dx; i < nextSequence.length - 1; i++) {
-                        nextSequence[i] = '^';
-                    }
-                } else if (key == '<') {
-                    for (int i = 0; i < Math.abs(dy); i++) {
-                        nextSequence[i] = 'v';
-                    }
-                    for (int i = Math.abs(dy); i < nextSequence.length - 1; i++) {
-                        nextSequence[i] = '<';
-                    }
+                char[] nextSequence1;
+                char[] nextSequence2 = new char[0];
+                String xChars = (dx > 0 ? ">" : "<").repeat(Math.abs(dx));
+                String yChars = (dy > 0 ? "^" : "v").repeat(Math.abs(dy));
+                if (dx >= 0) {
+                    nextSequence1 = (xChars + yChars + "A").toCharArray();
                 } else {
-                    if (dy > 0) {
-                        for (int i = 0; i < dy; i++) {
-                            nextSequence[i] = '^';
-                        }
-                        for (int i = dy; i < nextSequence.length - 1; i++) {
-                            nextSequence[i] = dx > 0 ? '>' : '<';
-                        }
-                    } else {
-                        for (int i = 0; i < Math.abs(dx); i++) {
-                            nextSequence[i] = dx > 0 ? '>' : '<';
-                        }
-                        for (int i = Math.abs(dx); i < nextSequence.length - 1; i++) {
-                            nextSequence[i] = 'v';
-                        }
-                    }
+                    nextSequence1 = (yChars + xChars + "A").toCharArray();
                 }
-                nextSequence[nextSequence.length - 1] = 'A';
-                parent.executeSequence(nextSequence);
+                if (dy <= 0) {
+                    nextSequence2 = (yChars + xChars + "A").toCharArray();
+                } else {
+                    nextSequence2 = (xChars + yChars + "A").toCharArray();
+                }
+                if (Arrays.equals(nextSequence1, nextSequence2)) {
+                    count += parent.executeSequence(nextSequence1);
+                } else {
+                    var s1 = parent.executeSequence(nextSequence1);
+                    var s2 = parent.executeSequence(nextSequence2);
+                    if (s1.length() != s2.length()) {
+                        System.out.println("HIT");
+                    }
+                    count += s1.length() > s2.length() ? s1 : s2;
+                }
                 pointer = keyPos;
             }
-
-        }
-
-        public int getScore() {
-            return instructionCount;
+            return count;
         }
     }
 }

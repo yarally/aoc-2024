@@ -2,6 +2,7 @@ package com.yarally.aoc24.library.Graphs;
 
 import com.yarally.aoc24.library.Tuple.Tuple;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +32,18 @@ public class Graph {
             this.nodes.add(n);
             this.nodeMap.put(n.id, n);
         }
+    }
+
+    public void pop(Node node) {
+        this.nodeMap.remove(node.id);
+        this.nodes.remove(node);
+        var toRemove = new ArrayList<Tuple<Node, Node>>();
+        for (var edge : edges) {
+            if (edge.x.equals(node) || edge.y.equals(node)) {
+                toRemove.add(edge);
+            }
+        }
+        toRemove.forEach(edges::remove);
     }
 
     public void put(Tuple<Node, Node> e) {

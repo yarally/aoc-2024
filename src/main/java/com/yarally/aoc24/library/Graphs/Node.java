@@ -17,6 +17,14 @@ public class Node {
         this.neighbours.add(neighbour);
     }
 
+    public void pop() {
+        this.neighbours.forEach(neigh -> neigh.neighbours.remove(this));
+    }
+
+    public int degree() {
+        return neighbours.size();
+    }
+
 
     @Override
     public boolean equals(Object o) {
